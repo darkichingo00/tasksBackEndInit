@@ -13,23 +13,27 @@ dotenv.config();
 const SECRET_KEY = process.env.JWT_SECRET;
 if (!SECRET_KEY) {
     console.error("Error: JWT_SECRET no está definido en las variables de entorno.");
-    process.exit(1); // Detener la aplicación si no hay una clave secreta
+    process.exit(1);
 }
 
 // Crear la aplicación Express
 const app: Application = express();
 
-// 🔹 Importante para que Express confíe en Railway como proxy
+// Importante para que Express confíe en Railway como proxy
 app.set("trust proxy", 1);
 
 // Configuración de CORS
 const corsOptions = {
     origin: 'https://challengeinit-production.up.railway.app',
-    methods: 'GET,POST,PUT,DELETE',
+    methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type,Authorization',
     credentials: true
 };
+
 app.use(cors(corsOptions));
+
+// Middleware para manejar solicitudes OPTIONS (preflight)
+app.options('*', cors(corsOptions));
 
 // Middleware para parsear JSON y formularios
 app.use(express.json());
